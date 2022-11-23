@@ -1,0 +1,3 @@
+/home/book/yuanma/Music_app/Server/bulid/CMakeFiles/rebuild_cache.dir
+/home/book/yuanma/Music_app/Server/bulid/CMakeFiles/server.dir
+/home/book/yuanma/Music_app/Server/bulid/CMakeFiles/edit_cache.dir

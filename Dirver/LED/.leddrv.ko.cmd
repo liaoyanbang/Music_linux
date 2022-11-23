@@ -1,0 +1,1 @@
+cmd_/home/book/yuanma/Music_app/Dirver/LED/leddrv.ko := arm-buildroot-linux-gnueabihf-ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/book/yuanma/Music_app/Dirver/LED/leddrv.ko /home/book/yuanma/Music_app/Dirver/LED/leddrv.o /home/book/yuanma/Music_app/Dirver/LED/leddrv.mod.o ;  true

@@ -1,0 +1,111 @@
+#include <sys/types.h>          /* See NOTES */
+#include <sys/socket.h>
+#include <string.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <signal.h>
+#include <sys/select.h>
+
+
+/* socket
+ * bind
+ * listen
+ * accept
+ * send/recv
+ */
+
+#define SERVER_PORT 8888
+#define BACKLOG     10
+
+int socket_fd[BACKLOG];
+
+fd_set myset;
+
+int main(int argc, char **argv)
+{
+	FD_ZERO(&myset);  
+	int iSocketServer;
+	int iSocketClient;
+	struct sockaddr_in tSocketServerAddr;
+	struct sockaddr_in tSocketClientAddr;
+	int iRet;
+	int iAddrLen;
+
+	int iRecvLen;
+	unsigned char ucRecvBuf[1000];
+
+	int iClientNum = -1;
+
+	signal(SIGCHLD,SIG_IGN);
+	
+	iSocketServer = socket(AF_INET, SOCK_STREAM, 0);
+	if (-1 == iSocketServer)
+	{
+		EMlog(LOG_ERROR, "socket error!\n");
+		return -1;
+	}
+
+	tSocketServerAddr.sin_family      = AF_INET;
+	tSocketServerAddr.sin_port        = htons(SERVER_PORT);  /* host to net, short */
+ 	tSocketServerAddr.sin_addr.s_addr = INADDR_ANY;
+	memset(tSocketServerAddr.sin_zero, 0, 8);
+	
+	iRet = bind(iSocketServer,(const struct sockaddr *)&tSocketServerAddr, sizeof(struct sockaddr));
+	if (-1 == iRet)
+	{
+		EMlog(LOG_ERROR, "bind() failederror!\n");
+		return -1;
+	}
+
+	iRet = listen(iSocketServer, BACKLOG);
+	if (-1 == iRet)
+	{
+		EMlog(LOG_ERROR, "listen() failed!\n");
+		return -1;
+	}
+	EMlog(LOG_DEBUG,"Listening!\n");
+	while (1)
+	{
+		iAddrLen = sizeof(struct sockaddr);
+		iSocketClient = accept(iSocketServer,(struct sockaddr *)&tSocketClientAddr, iAddrLen);
+		if (-1 != iSocketClient)
+		{
+			EMlog(LOG_DEBUG,"accept successed!\n");
+			socket_fd[iClientNum++] = iSocketClient;
+			EMlog(LOG_DEBUG,"Get connect from client %d : %s\n",  iClientNum, inet_ntoa(tSocketClientAddr.sin_addr));
+			if(!fork())
+			{
+				while(1)
+				{
+					iRecvLen = recv(iSocketClient, ucRecvBuf, 999, 0);
+					if (iRecvLen <= 0)
+					{
+						close(iSocketClient);
+						return -1;
+					}
+					else
+					{
+						ucRecvBuf[iRecvLen] = '\0';
+						EMlog(LOG_DEBUG,"Get Msg From Client %d: %s\n", iClientNum, ucRecvBuf);
+						for(int i =0;i<iClientNum;i++)
+						{
+							send(socket_fd[i], ucRecvBuf, strlen(ucRecvBuf),0);
+						}
+					}
+				}				
+			}
+		}
+		else 
+			{
+			EMlog(LOG_DEBUG,"Get Msg From link error\n");
+			}
+	}
+	
+	close(iSocketServer);
+	return 0;
+}
+
+
+

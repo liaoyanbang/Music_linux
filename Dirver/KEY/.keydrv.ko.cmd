@@ -1,0 +1,1 @@
+cmd_/home/book/yuanma/Music_app/Dirver/KEY/keydrv.ko := arm-buildroot-linux-gnueabihf-ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/book/yuanma/Music_app/Dirver/KEY/keydrv.ko /home/book/yuanma/Music_app/Dirver/KEY/keydrv.o /home/book/yuanma/Music_app/Dirver/KEY/keydrv.mod.o ;  true

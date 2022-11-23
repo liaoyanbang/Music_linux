@@ -1,0 +1,11 @@
+cmake_minimum_required(VERSION 3.0.0)
+MESSAGE("This is isntall dir")
+project(Board)#dir_name 
+include_directories(./include)
+add_definitions("-Wall -lpthread -g")
+aux_source_directory(./src DIR_SRC)
+#SET(LIBRARIES ./cJSON/libcjson.so)
+#add_subdirectory(./cJSON)
+add_executable(app ${DIR_SRC})
+target_link_libraries(app -lpthread)
+target_link_libraries(app /lib/libasound.so)

@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/server.dir/src/main.cpp.o CMakeFiles/server.dir/src/player.cpp.o CMakeFiles/server.dir/src/server.cpp.o  -o server -Wl,-Bstatic -ljsoncpp -Wl,-Bdynamic -levent 
